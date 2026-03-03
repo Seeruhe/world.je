@@ -1,0 +1,83 @@
+# Docker Compose configuration for PostgreSQL Database
+# This file sets up PostgreSQL for persistent user data storage in WorkAdventure
+#
+# Usage:
+#   docker-compose -f docker-compose.yaml -f docker-compose.postgres.yaml up -d
+#
+# Environment variables (set in .env):
+#   POSTGRES_HOST=postgres
+#   POSTGRES_PORT=5432
+#   POSTGRES_USER=workadventure
+#   POSTGRES_PASSWORD=workadventure_secret
+#   POSTGRES_DATABASE=workadventure
+
+version: "3"
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: workadventure-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-workadventure}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-workadventure_secret}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE:-workadventure}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./back/src/Services/Database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "${POSTGRES_EXTERNAL_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-workadventure} -d ${POSTGRES_DATABASE:-workadventure}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    labels:
+      - "com.workadventure.service=postgres"
+      - "com.workadventure.description=PostgreSQL Database for WorkAdventure"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # pgAdmin for database management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: workadventure-pgadmin
+    restart: unless-stopped
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@workadventure.localhost}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+      - "5050:5050"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.workadventure.localhost`)"
+      - "traefik.http.routers.pgadmin.entryPoints=web"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=5050"
+
+  # Update back service to receive PostgreSQL environment variables
+  back:
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_USER=${POSTGRES_USER:-workadventure}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-workadventure_secret}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE:-workadventure}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: workadventure-master_default
+    external: true

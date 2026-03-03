@@ -1,0 +1,15 @@
+export {
+    walletStore,
+    isWalletConnected,
+    isWalletAuthenticated,
+    walletAddress,
+    walletError,
+    formattedWalletAddress,
+    connectWallet,
+    authenticateWithWallet,
+    getWalletUserInfo,
+    disconnectWallet,
+    checkWalletConnection,
+    type WalletState,
+    type WalletUser,
+} from "./WalletStore";

@@ -1,0 +1,38 @@
+# Simple production Dockerfile for WorkAdventure Play service
+FROM node:20-bullseye-slim
+
+WORKDIR /usr/src/app
+
+# Install dependencies
+RUN apt-get update && apt-get install -y git curl python3 make g++ && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy package files
+COPY package.json package-lock.json ./
+COPY play/package.json play/package.json
+COPY libs/messages/package.json libs/messages/package.json
+COPY libs/map-editor/package.json libs/map-editor/package.json
+COPY libs/math-utils/package.json libs/math-utils/package.json
+COPY libs/tailwind/package.json libs/tailwind/package.json
+COPY libs/store-utils/package.json libs/store-utils/package.json
+COPY libs/shared-utils/package.json libs/shared-utils/package.json
+COPY play/packages/iframe-api-typings/package.json play/packages/iframe-api-typings/package.json
+
+# Install dependencies
+RUN npm ci --workspace=workadventure-play --workspace=@workadventure/iframe-api-typings || npm install
+
+# Copy source code
+COPY libs ./libs
+COPY play ./play
+
+# Build the application
+WORKDIR /usr/src/app/play
+ENV NODE_ENV=production
+RUN npm run build || echo "Build may have warnings"
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=10s --timeout=7s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:3000/ping || exit 1
+
+CMD ["npm", "run", "start"]

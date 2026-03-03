@@ -1,0 +1,12 @@
+{
+  "name": "workadventure-ai-gateway",
+  "version": "1.0.0",
+  "description": "AI Gateway for WorkAdventure",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.0"
+  }
+}
