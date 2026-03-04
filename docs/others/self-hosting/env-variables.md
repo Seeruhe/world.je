@@ -125,6 +125,24 @@ Environment variables for the Play service (frontend and pusher).
 | `LIVEKIT_RECORDING_S3_REGION` | No | The S3 region for Livekit recording. |
 | `LIVEKIT_RECORDING_S3_CDN_ENDPOINT` | No | The S3 CDN endpoint for Livekit recording. |
 | `BACKGROUND_TRANSFORMER_ENGINE` | No | Virtual background transformer engine: 'tasks-vision' (GPU-accelerated, experimental) or 'selfie-segmentation' (CPU-based, stable). Currently defaults to 'selfie-segmentation'; 'tasks-vision' is intended as the future default once considered stable. |
+| `OPENCLAW_ENABLED` | No | Enable OpenClaw AI integration for chat assistant and AI NPCs. Defaults to false |
+| `OPENCLAW_GATEWAY_URL` | No | OpenClaw Gateway WebSocket URL (e.g., ws://openclaw-gateway:18789) |
+| `OPENCLAW_API_KEY` | No | API key for OpenClaw Gateway authentication |
+| `OPENCLAW_DEFAULT_MODEL` | No | Default AI model to use (e.g., anthropic/claude-3-5-sonnet-20241022) |
+| `OPENCLAW_TRIGGER_PREFIX` | No | Trigger prefix for AI chat messages (e.g., @AI) |
+| `POSTGRES_HOST` | No | PostgreSQL server hostname or IP address |
+| `POSTGRES_PORT` | No | PostgreSQL server port. Defaults to 5432 |
+| `POSTGRES_USER` | No | PostgreSQL username |
+| `POSTGRES_PASSWORD` | No | PostgreSQL password |
+| `POSTGRES_DATABASE` | No | PostgreSQL database name |
+| `WALLET_AUTH_ENABLED` | No | Enable wallet-based authentication. Defaults to false |
+| `WALLET_CHAIN_ID` | No | Blockchain chain ID for wallet authentication. Defaults to 1 (Ethereum mainnet) |
+| `WALLET_PROJECT_ID` | No | WalletConnect project ID for mobile wallet support |
+| `INVITE_ENABLED` | No | Enable the invite system. Defaults to true |
+| `INVITE_REWARD_POINTS` | No | Points awarded for successful invites. Defaults to 10 |
+| `INVITE_CODE_LENGTH` | No | Length of generated invite codes. Defaults to 8 |
+| `NFT_CONTRACT_ADDRESS` | No | NFT badge contract address |
+| `NFT_CHAIN_ID` | No | Blockchain chain ID for NFT badges. Defaults to 1 |
 
 ## Back Service
 
@@ -176,6 +194,19 @@ Environment variables for the Back service (backend API).
 | `LIVEKIT_RECORDING_S3_SECRET_KEY` | No | The S3 secret key for Livekit recording. |
 | `LIVEKIT_RECORDING_S3_REGION` | No | The S3 region for Livekit recording. |
 | `LIVEKIT_RECORDING_S3_BUCKET` | No | The S3 bucket for Livekit recording. |
+| `POSTGRES_HOST` | No | PostgreSQL server hostname or IP address |
+| `POSTGRES_PORT` | No | PostgreSQL server port. Defaults to 5432 |
+| `POSTGRES_USER` | No | PostgreSQL username |
+| `POSTGRES_PASSWORD` | No | PostgreSQL password |
+| `POSTGRES_DATABASE` | No | PostgreSQL database name |
+| `WALLET_AUTH_ENABLED` | No | Enable wallet-based authentication. Defaults to false |
+| `WALLET_CHAIN_ID` | No | Blockchain chain ID for wallet authentication. Defaults to 1 (Ethereum mainnet) |
+| `WALLET_PROJECT_ID` | No | WalletConnect project ID for mobile wallet support |
+| `INVITE_ENABLED` | No | Enable the invite system. Defaults to true |
+| `INVITE_REWARD_POINTS` | No | Points awarded for successful invites. Defaults to 10 |
+| `INVITE_CODE_LENGTH` | No | Length of generated invite codes. Defaults to 8 |
+| `NFT_CONTRACT_ADDRESS` | No | NFT badge contract address |
+| `NFT_CHAIN_ID` | No | Blockchain chain ID for NFT badges. Defaults to 1 |
 
 ## Map Storage Service
 
