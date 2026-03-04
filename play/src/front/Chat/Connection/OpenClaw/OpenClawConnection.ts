@@ -290,7 +290,7 @@ export class OpenClawConnection {
     /**
      * Send a request and wait for response
      */
-    private sendRequest<T>(message: unknown, requestId: string): Promise<T> {
+    sendRequest<T>(message: unknown, requestId: string): Promise<T> {
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
                 this.pendingRequests.delete(requestId);
@@ -404,6 +404,248 @@ export class OpenClawConnection {
             clearInterval(this.pingInterval);
             this.pingInterval = null;
         }
+    }
+
+    // ========================================================================
+    // Skills Methods
+    // ========================================================================
+
+    /**
+     * Get list of available skills
+     */
+    async listSkills(options?: { category?: string; installed?: boolean }): Promise<{ skills: unknown[]; categories: string[] }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `skills-list-${uuidv4()}`;
+        const message = {
+            type: "skills.list",
+            requestId,
+            payload: options || {},
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ skills: unknown[]; categories: string[] }>(message, requestId);
+    }
+
+    /**
+     * Get skill info by ID
+     */
+    async getSkillInfo(skillId: string): Promise<{ skill: unknown }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `skills-info-${uuidv4()}`;
+        const message = {
+            type: "skills.info",
+            requestId,
+            payload: { skillId },
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ skill: unknown }>(message, requestId);
+    }
+
+    /**
+     * Install a skill
+     */
+    async installSkill(options: {
+        skillId: string;
+        version?: string;
+        userConfig?: Record<string, unknown>;
+        targetBindings?: string[];
+        grantedPermissions?: string[];
+    }): Promise<{ skill: unknown; installPath: string; success: boolean; message?: string }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `skills-install-${uuidv4()}`;
+        const message = {
+            type: "skills.install",
+            requestId,
+            payload: options,
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ skill: unknown; installPath: string; success: boolean; message?: string }>(message, requestId);
+    }
+
+    /**
+     * Uninstall a skill
+     */
+    async uninstallSkill(skillId: string): Promise<{ skillId: string; success: boolean; message?: string }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `skills-uninstall-${uuidv4()}`;
+        const message = {
+            type: "skills.uninstall",
+            requestId,
+            payload: { skillId },
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ skillId: string; success: boolean; message?: string }>(message, requestId);
+    }
+
+    /**
+     * Execute a skill
+     */
+    async executeSkill(options: {
+        skillId: string;
+        targetId?: string;
+        parameters?: Record<string, unknown>;
+        sessionId?: string;
+        executionMode?: "server" | "agent";
+    }): Promise<{
+        executionId: string;
+        status: "pending" | "running" | "completed" | "failed";
+        output?: unknown;
+        error?: string;
+        executionTime?: number;
+        targetId?: string;
+        logs?: string[];
+    }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `skills-execute-${uuidv4()}`;
+        const message = {
+            type: "skills.execute",
+            requestId,
+            payload: options,
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{
+            executionId: string;
+            status: "pending" | "running" | "completed" | "failed";
+            output?: unknown;
+            error?: string;
+            executionTime?: number;
+            targetId?: string;
+            logs?: string[];
+        }>(message, requestId);
+    }
+
+    /**
+     * Get skill categories
+     */
+    async getSkillCategories(): Promise<{ categories: string[] }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `skills-categories-${uuidv4()}`;
+        const message = {
+            type: "skills.categories",
+            requestId,
+            payload: {},
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ categories: string[] }>(message, requestId);
+    }
+
+    // ========================================================================
+    // Targets Methods
+    // ========================================================================
+
+    /**
+     * Get list of targets
+     */
+    async listTargets(options?: { type?: string; status?: string }): Promise<{ targets: unknown[] }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `targets-list-${uuidv4()}`;
+        const message = {
+            type: "targets.list",
+            requestId,
+            payload: options || {},
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ targets: unknown[] }>(message, requestId);
+    }
+
+    /**
+     * Register a new target
+     */
+    async registerTarget(options: {
+        name: string;
+        type: string;
+        icon?: string;
+        description?: string;
+        config: Record<string, unknown>;
+    }): Promise<{ target: unknown; success: boolean; message?: string }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `targets-register-${uuidv4()}`;
+        const message = {
+            type: "targets.register",
+            requestId,
+            payload: options,
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ target: unknown; success: boolean; message?: string }>(message, requestId);
+    }
+
+    /**
+     * Unregister a target
+     */
+    async unregisterTarget(targetId: string): Promise<{ targetId: string; success: boolean; message?: string }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `targets-unregister-${uuidv4()}`;
+        const message = {
+            type: "targets.unregister",
+            requestId,
+            payload: { targetId },
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{ targetId: string; success: boolean; message?: string }>(message, requestId);
+    }
+
+    /**
+     * Check target status
+     */
+    async checkTargetStatus(targetId?: string): Promise<{
+        targetId?: string;
+        status?: string;
+        lastChecked?: number;
+        targets?: Array<{ targetId: string; status: string; lastChecked: number }>;
+    }> {
+        if (!this.isConnected()) {
+            throw new Error("Not connected to OpenClaw gateway");
+        }
+
+        const requestId = `targets-status-${uuidv4()}`;
+        const message = {
+            type: "targets.status",
+            requestId,
+            payload: targetId ? { targetId } : {},
+            timestamp: Date.now(),
+        };
+
+        return this.sendRequest<{
+            targetId?: string;
+            status?: string;
+            lastChecked?: number;
+            targets?: Array<{ targetId: string; status: string; lastChecked: number }>;
+        }>(message, requestId);
     }
 
     /**

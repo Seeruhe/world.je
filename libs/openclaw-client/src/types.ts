@@ -151,7 +151,409 @@ export type WSMessageType =
     | 'session.list'
     | 'health'
     | 'ping'
-    | 'pong';
+    | 'pong'
+    // Skills message types
+    | 'skills.list'
+    | 'skills.info'
+    | 'skills.install'
+    | 'skills.uninstall'
+    | 'skills.execute'
+    | 'skills.categories'
+    // Targets message types
+    | 'targets.list'
+    | 'targets.register'
+    | 'targets.unregister'
+    | 'targets.status';
+
+// ============================================================================
+// SKILL TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Skill type classification
+ */
+export type SkillType = 'npm' | 'mcp' | 'script' | 'project' | 'api';
+
+/**
+ * Skill execution mode
+ */
+export type SkillExecutionMode = 'server' | 'agent' | 'hybrid';
+
+/**
+ * Permission types for skills
+ */
+export type SkillPermissionType = 'file-system' | 'network' | 'shell' | 'device' | 'mcp' | 'api';
+
+/**
+ * Skill permission definition
+ */
+export interface SkillPermission {
+    type: SkillPermissionType;
+    description: string;
+    required: boolean;
+}
+
+/**
+ * Skill configuration field types
+ */
+export type SkillConfigFieldType = 'string' | 'number' | 'boolean' | 'select' | 'json';
+
+/**
+ * Skill configuration field definition
+ */
+export interface SkillConfigField {
+    key: string;
+    label: string;
+    type: SkillConfigFieldType;
+    required: boolean;
+    default?: unknown;
+    description?: string;
+    options?: { value: string; label: string }[]; // For select type
+}
+
+/**
+ * MCP server configuration
+ */
+export interface MCPConfig {
+    command: string;
+    args?: string[];
+    env?: Record<string, string>;
+}
+
+/**
+ * Project configuration for open-source skills
+ */
+export interface ProjectConfig {
+    repoUrl: string;
+    branch?: string;
+    entrypoint: string;
+}
+
+/**
+ * API configuration for external API skills
+ */
+export interface APIConfig {
+    baseUrl: string;
+    authType?: 'none' | 'api-key' | 'oauth2' | 'bearer';
+    authConfig?: Record<string, string>;
+}
+
+/**
+ * Complete Skill definition
+ */
+export interface Skill {
+    id: string;
+    name: string;
+    description: string;
+    version: string;
+    author: string;
+    category: string;
+    icon: string;
+
+    // Skill type and configuration
+    type: SkillType;
+    npmPackage?: string;
+    mcpConfig?: MCPConfig;
+    scriptUrl?: string;
+    projectConfig?: ProjectConfig;
+    apiConfig?: APIConfig;
+
+    // Execution mode
+    executionMode: SkillExecutionMode;
+
+    // Permissions and configuration
+    permissions: SkillPermission[];
+    configFields?: SkillConfigField[];
+
+    // Status
+    installed: boolean;
+    installPath?: string;
+}
+
+/**
+ * Skill list request payload
+ */
+export interface SkillsListPayload {
+    category?: string;
+    installed?: boolean;
+}
+
+/**
+ * Skill info request payload
+ */
+export interface SkillsInfoPayload {
+    skillId: string;
+}
+
+/**
+ * Skill install request payload
+ */
+export interface SkillsInstallPayload {
+    skillId: string;
+    version?: string;
+    userConfig?: Record<string, unknown>;
+    targetBindings?: string[];
+    grantedPermissions?: string[];
+}
+
+/**
+ * Skill uninstall request payload
+ */
+export interface SkillsUninstallPayload {
+    skillId: string;
+}
+
+/**
+ * Skill execute request payload
+ */
+export interface SkillsExecutePayload {
+    skillId: string;
+    targetId?: string;
+    parameters?: Record<string, unknown>;
+    sessionId?: string;
+    executionMode?: SkillExecutionMode;
+}
+
+/**
+ * Skill response types
+ */
+export interface SkillInfoResponse {
+    skill: Skill;
+}
+
+export interface SkillsListResponse {
+    skills: Skill[];
+    categories: string[];
+}
+
+export interface SkillInstallResponse {
+    skill: Skill;
+    installPath: string;
+    success: boolean;
+    message?: string;
+}
+
+export interface SkillUninstallResponse {
+    skillId: string;
+    success: boolean;
+    message?: string;
+}
+
+export interface SkillExecuteResponse {
+    executionId: string;
+    status: 'pending' | 'running' | 'completed' | 'failed';
+    output?: unknown;
+    error?: string;
+    executionTime?: number;
+    targetId?: string;
+    logs?: string[];
+}
+
+// ============================================================================
+// TARGET TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Target type classification
+ */
+export type TargetType = 'device' | 'virtual-area' | 'external-api' | 'open-project';
+
+/**
+ * Target status
+ */
+export type TargetStatus = 'online' | 'offline' | 'unknown' | 'error';
+
+/**
+ * Base Target definition
+ */
+export interface SkillTarget {
+    id: string;
+    name: string;
+    type: TargetType;
+    icon: string;
+    description?: string;
+    config: Record<string, unknown>;
+    status: TargetStatus;
+    lastChecked?: number;
+    boundSkills?: string[];
+}
+
+/**
+ * Device target configuration
+ */
+export interface DeviceTargetConfig {
+    ipAddress?: string;
+    port?: number;
+    agentId?: string;
+    osType?: 'windows' | 'linux' | 'macos';
+}
+
+/**
+ * Virtual area target configuration
+ */
+export interface VirtualAreaTargetConfig {
+    roomSlug: string;
+    areaName: string;
+    mapUrl?: string;
+}
+
+/**
+ * External API target configuration
+ */
+export interface ExternalAPITargetConfig {
+    baseUrl: string;
+    authType: 'none' | 'api-key' | 'oauth2' | 'bearer';
+    credentials?: Record<string, string>;
+}
+
+/**
+ * Open project target configuration
+ */
+export interface OpenProjectTargetConfig {
+    repoUrl: string;
+    branch?: string;
+    defaultBranch?: string;
+}
+
+/**
+ * Device target
+ */
+export interface DeviceTarget extends SkillTarget {
+    type: 'device';
+    config: DeviceTargetConfig;
+}
+
+/**
+ * Virtual area target
+ */
+export interface VirtualAreaTarget extends SkillTarget {
+    type: 'virtual-area';
+    config: VirtualAreaTargetConfig;
+}
+
+/**
+ * External API target
+ */
+export interface ExternalAPITarget extends SkillTarget {
+    type: 'external-api';
+    config: ExternalAPITargetConfig;
+}
+
+/**
+ * Open project target
+ */
+export interface OpenProjectTarget extends SkillTarget {
+    type: 'open-project';
+    config: OpenProjectTargetConfig;
+}
+
+/**
+ * Target list request payload
+ */
+export interface TargetsListPayload {
+    type?: TargetType;
+    status?: TargetStatus;
+}
+
+/**
+ * Target register request payload
+ */
+export interface TargetsRegisterPayload {
+    name: string;
+    type: TargetType;
+    icon?: string;
+    description?: string;
+    config: Record<string, unknown>;
+}
+
+/**
+ * Target unregister request payload
+ */
+export interface TargetsUnregisterPayload {
+    targetId: string;
+}
+
+/**
+ * Target status check payload
+ */
+export interface TargetsStatusPayload {
+    targetId?: string;
+}
+
+/**
+ * Target response types
+ */
+export interface TargetsListResponse {
+    targets: SkillTarget[];
+}
+
+export interface TargetRegisterResponse {
+    target: SkillTarget;
+    success: boolean;
+    message?: string;
+}
+
+export interface TargetStatusResponse {
+    targetId: string;
+    status: TargetStatus;
+    lastChecked: number;
+    details?: Record<string, unknown>;
+}
+
+// ============================================================================
+// WORLD EVENT DEFINITIONS
+// ============================================================================
+
+/**
+ * Event type enumeration for world events
+ */
+export type WorldEventType =
+    | 'room.join' | 'room.leave' | 'room.create' | 'room.instance.split'
+    | 'zone.enter' | 'zone.leave' | 'zone.trigger'
+    | 'item.click' | 'item.pickup' | 'item.use'
+    | 'skill.use.requested' | 'skill.use.started' | 'skill.use.completed' | 'skill.use.failed'
+    | 'npc.talk' | 'npc.interact'
+    | 'tool.call.started' | 'tool.call.succeeded' | 'tool.call.failed'
+    | 'world.state.updated';
+
+/**
+ * Actor type in events
+ */
+export type EventActorType = 'user' | 'system' | 'npc' | 'flow';
+
+/**
+ * Event actor definition
+ */
+export interface EventActor {
+    type: EventActorType;
+    id: string;
+    role?: string;
+}
+
+/**
+ * Event context definition
+ */
+export interface EventContext {
+    orgId?: string;
+    projectId?: string;
+    roomId: string;
+    instanceId?: string;
+    zoneId?: string;
+}
+
+/**
+ * World event structure
+ */
+export interface WorldEvent {
+    event_id: string;
+    ts: number;
+    version: string;
+    trace_id: string;
+    actor: EventActor;
+    context: EventContext;
+    type: WorldEventType;
+    payload: Record<string, unknown>;
+}
 
 /**
  * WebSocket message structure

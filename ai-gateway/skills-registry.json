@@ -1,0 +1,329 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    "file-system",
+    "network",
+    "automation",
+    "data",
+    "communication",
+    "development"
+  ],
+  "skills": [
+    {
+      "id": "skill-file-manager",
+      "name": "文件管理",
+      "description": "浏览、读取、写入本地或远程文件系统",
+      "version": "1.0.0",
+      "author": "OpenClaw Team",
+      "category": "file-system",
+      "icon": "folder",
+      "type": "npm",
+      "npmPackage": "@openclaw/skill-file-manager",
+      "executionMode": "hybrid",
+      "permissions": [
+        {
+          "type": "file-system",
+          "description": "读取和写入文件系统",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "rootPath",
+          "label": "根目录路径",
+          "type": "string",
+          "required": false,
+          "default": "/",
+          "description": "限制文件操作的范围"
+        },
+        {
+          "key": "allowDelete",
+          "label": "允许删除文件",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-http-request",
+      "name": "HTTP 请求",
+      "description": "发送 HTTP/HTTPS 请求到任意 API",
+      "version": "2.1.0",
+      "author": "OpenClaw Team",
+      "category": "network",
+      "icon": "globe",
+      "type": "mcp",
+      "mcpConfig": {
+        "command": "mcp-server-http",
+        "args": [],
+        "env": {}
+      },
+      "executionMode": "server",
+      "permissions": [
+        {
+          "type": "network",
+          "description": "发送网络请求",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "timeout",
+          "label": "请求超时 (ms)",
+          "type": "number",
+          "required": false,
+          "default": 30000
+        },
+        {
+          "key": "maxRedirects",
+          "label": "最大重定向次数",
+          "type": "number",
+          "required": false,
+          "default": 5
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-github",
+      "name": "GitHub 操作",
+      "description": "与 GitHub API 交互：创建 Issue、PR、管理仓库",
+      "version": "1.0.0",
+      "author": "OpenClaw Team",
+      "category": "automation",
+      "icon": "github",
+      "type": "project",
+      "projectConfig": {
+        "repoUrl": "https://github.com/openclaw/github-skill",
+        "branch": "main",
+        "entrypoint": "dist/index.js"
+      },
+      "executionMode": "hybrid",
+      "permissions": [
+        {
+          "type": "api",
+          "description": "访问 GitHub API",
+          "required": true
+        },
+        {
+          "type": "network",
+          "description": "网络访问",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "githubToken",
+          "label": "GitHub Token",
+          "type": "string",
+          "required": true,
+          "description": "GitHub Personal Access Token"
+        },
+        {
+          "key": "defaultOwner",
+          "label": "默认仓库所有者",
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "defaultRepo",
+          "label": "默认仓库名称",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-remote-shell",
+      "name": "远程 Shell",
+      "description": "在远程设备上执行 Shell 命令",
+      "version": "1.2.0",
+      "author": "OpenClaw Team",
+      "category": "automation",
+      "icon": "terminal",
+      "type": "script",
+      "scriptUrl": "./scripts/remote-shell.js",
+      "executionMode": "agent",
+      "permissions": [
+        {
+          "type": "shell",
+          "description": "执行 Shell 命令",
+          "required": true
+        },
+        {
+          "type": "device",
+          "description": "访问设备",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "timeout",
+          "label": "命令超时 (ms)",
+          "type": "number",
+          "required": false,
+          "default": 60000
+        },
+        {
+          "key": "allowedCommands",
+          "label": "允许的命令列表",
+          "type": "json",
+          "required": false,
+          "default": [],
+          "description": "留空则允许所有命令"
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-clipboard",
+      "name": "剪贴板",
+      "description": "管理系统剪贴板：复制、粘贴、读取内容",
+      "version": "1.0.0",
+      "author": "OpenClaw Team",
+      "category": "automation",
+      "icon": "clipboard",
+      "type": "npm",
+      "npmPackage": "@openclaw/skill-clipboard",
+      "executionMode": "agent",
+      "permissions": [
+        {
+          "type": "device",
+          "description": "访问设备剪贴板",
+          "required": true
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-webhook",
+      "name": "Webhook",
+      "description": "发送 Webhook 通知到外部服务",
+      "version": "1.0.0",
+      "author": "OpenClaw Team",
+      "category": "communication",
+      "icon": "bell",
+      "type": "api",
+      "apiConfig": {
+        "baseUrl": "",
+        "authType": "none"
+      },
+      "executionMode": "server",
+      "permissions": [
+        {
+          "type": "network",
+          "description": "发送网络请求",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "webhookUrl",
+          "label": "Webhook URL",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "secret",
+          "label": "签名密钥",
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "headers",
+          "label": "自定义请求头",
+          "type": "json",
+          "required": false,
+          "default": {}
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-sql-query",
+      "name": "SQL 查询",
+      "description": "执行 SQL 查询操作数据库",
+      "version": "1.0.0",
+      "author": "OpenClaw Team",
+      "category": "data",
+      "icon": "database",
+      "type": "npm",
+      "npmPackage": "@openclaw/skill-sql",
+      "executionMode": "server",
+      "permissions": [
+        {
+          "type": "network",
+          "description": "数据库网络连接",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "connectionString",
+          "label": "数据库连接字符串",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "allowWrite",
+          "label": "允许写操作",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "key": "maxRows",
+          "label": "最大返回行数",
+          "type": "number",
+          "required": false,
+          "default": 1000
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-code-exec",
+      "name": "代码执行",
+      "description": "在沙箱环境中执行代码片段",
+      "version": "1.0.0",
+      "author": "OpenClaw Team",
+      "category": "development",
+      "icon": "code",
+      "type": "npm",
+      "npmPackage": "@openclaw/skill-code-exec",
+      "executionMode": "server",
+      "permissions": [
+        {
+          "type": "shell",
+          "description": "执行代码",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "languages",
+          "label": "支持的语言",
+          "type": "select",
+          "required": false,
+          "default": "javascript",
+          "options": [
+            { "value": "javascript", "label": "JavaScript" },
+            { "value": "python", "label": "Python" },
+            { "value": "typescript", "label": "TypeScript" }
+          ]
+        },
+        {
+          "key": "timeout",
+          "label": "执行超时 (ms)",
+          "type": "number",
+          "required": false,
+          "default": 5000
+        }
+      ],
+      "installed": false
+    }
+  ]
+}

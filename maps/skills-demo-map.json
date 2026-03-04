@@ -1,0 +1,51 @@
+{
+  "name": "Skills Demo Map",
+  "description": "Demo map for Skills and Server Room features",
+  "mapUrl": "/maps/skills-demo.json",
+  "npcs": {
+    "skills-npcs": [
+      {
+        "id": "skills-store-main",
+        "name": "技能商店",
+        "x": 400,
+        "y": 300,
+        "triggerMessage": "点击打开技能商店",
+        "greetingMessage": "欢迎来到技能商店！我可以帮你安装和管理技能。",
+        "personality": "一个专业的技术助手，帮助用户管理 OpenClaw Skills",
+        "associatedDevice": "server-room-main"
+      }
+    ],
+    "server-room-npcs": [
+      {
+        "id": "server-room-main",
+        "name": "机房配置",
+        "x": 600,
+        "y": 300,
+        "triggerMessage": "点击配置系统设置",
+        "greetingMessage": "欢迎来到机房！你可以在这里配置 AI 提供商、代理和系统设置。"
+      }
+    ],
+    "ai-npcs": [
+      {
+        "id": "ai-assistant-lobby",
+        "name": "AI 助手",
+        "x": 200,
+        "y": 300,
+        "personality": "一个友好的 AI 助手",
+        "systemPrompt": "你是工作空间里的 AI 助手，帮助用户解决问题。",
+        "triggerMessage": "点击与 AI 对话",
+        "greetingMessage": "你好！有什么我可以帮助你的吗？"
+      }
+    ]
+  },
+  "areas": {
+    "skills-demo-zone": {
+      "name": "技能演示区",
+      "x": 100,
+      "y": 100,
+      "width": 800,
+      "height": 400,
+      "description": "这里展示了 WorkAdventure 的 Skills 系统功能"
+    }
+  }
+}

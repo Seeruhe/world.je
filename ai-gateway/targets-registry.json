@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "targets": [
+    {
+      "id": "target-server-local",
+      "name": "本地服务器",
+      "type": "device",
+      "icon": "server",
+      "description": "OpenClaw 所在的服务器",
+      "config": {
+        "ipAddress": "127.0.0.1",
+        "osType": "linux"
+      },
+      "status": "online",
+      "boundSkills": []
+    },
+    {
+      "id": "target-office-pc-01",
+      "name": "办公区-电脑A",
+      "type": "device",
+      "icon": "computer",
+      "description": "办公室工作电脑",
+      "config": {
+        "ipAddress": "192.168.1.100",
+        "port": 8080,
+        "agentId": "agent-office-001",
+        "osType": "windows"
+      },
+      "status": "unknown",
+      "boundSkills": []
+    },
+    {
+      "id": "target-meeting-room-b",
+      "name": "会议室-B",
+      "type": "virtual-area",
+      "icon": "map",
+      "description": "虚拟会议室",
+      "config": {
+        "roomSlug": "meeting-room-b",
+        "areaName": "会议室B",
+        "mapUrl": "/maps/meeting-room.json"
+      },
+      "status": "online",
+      "boundSkills": []
+    },
+    {
+      "id": "target-workspace-dev",
+      "name": "开发工作区",
+      "type": "virtual-area",
+      "icon": "briefcase",
+      "description": "开发团队工作区域",
+      "config": {
+        "roomSlug": "dev-workspace",
+        "areaName": "开发工作区"
+      },
+      "status": "online",
+      "boundSkills": []
+    },
+    {
+      "id": "target-github-opensource",
+      "name": "开源项目仓库",
+      "type": "open-project",
+      "icon": "github",
+      "description": "GitHub 开源项目",
+      "config": {
+        "repoUrl": "https://github.com/workadventure/workadventure",
+        "branch": "develop",
+        "defaultBranch": "develop"
+      },
+      "status": "online",
+      "boundSkills": []
+    },
+    {
+      "id": "target-api-internal",
+      "name": "内部 API 服务",
+      "type": "external-api",
+      "icon": "api",
+      "description": "公司内部 API 网关",
+      "config": {
+        "baseUrl": "https://api.internal.example.com",
+        "authType": "bearer"
+      },
+      "status": "unknown",
+      "boundSkills": []
+    },
+    {
+      "id": "target-ci-cd",
+      "name": "CI/CD 服务",
+      "type": "external-api",
+      "icon": "rocket",
+      "description": "持续集成/部署服务",
+      "config": {
+        "baseUrl": "https://ci.example.com/api",
+        "authType": "api-key"
+      },
+      "status": "online",
+      "boundSkills": []
+    },
+    {
+      "id": "target-slack-webhook",
+      "name": "Slack 通知",
+      "type": "external-api",
+      "icon": "slack",
+      "description": "Slack Webhook 通知",
+      "config": {
+        "baseUrl": "https://hooks.slack.com/services",
+        "authType": "none"
+      },
+      "status": "online",
+      "boundSkills": []
+    }
+  ]
+}

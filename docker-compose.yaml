@@ -42,6 +42,8 @@ services:
     ports:
       - "9231:9229"
       - "9235:9235"
+      - "3000:3000"   # HTTP 直接访问
+      - "3001:3001"   # WebSocket
     environment:
       HTTP_PROXY: ${HTTP_PROXY:-}
       HTTPS_PROXY: ${HTTPS_PROXY:-}

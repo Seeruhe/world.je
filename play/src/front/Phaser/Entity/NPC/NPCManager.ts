@@ -5,6 +5,8 @@
 
 import type { GameScene } from "../../Game/GameScene";
 import { AIDrivenNPC, type AINPCConfig, createAINPC } from "./AIDrivenNPC";
+import { SkillsNPC, type SkillsNPCConfig, createSkillsNPC, isSkillsNPC } from "./SkillsNPC";
+import { ServerRoomNPC, type ServerRoomNPCConfig, createServerRoomNPC, isServerRoomNPC } from "./ServerRoomNPC";
 import { AITriggerArea, type AITriggerZoneConfig, createAITriggerArea } from "../../Game/Areas/AITriggerArea";
 import { OPENCLAW_ENABLED } from "../../../Enum/EnvironmentVariable";
 import type { ITiledMapProperty } from "@workadventure/tiled-map-type-guard";
@@ -14,6 +16,23 @@ import type { ITiledMapProperty } from "@workadventure/tiled-map-type-guard";
  */
 const AI_NPC_LAYER_NAME = "ai-npcs";
 const AI_ZONE_LAYER_NAME = "ai-zones";
+const SKILLS_NPC_LAYER_NAME = "skills-npcs";
+const SERVER_ROOM_NPC_LAYER_NAME = "server-room-npcs";
+
+/**
+ * Union type for all NPC types
+ */
+export type AnyNPC = AIDrivenNPC | SkillsNPC | ServerRoomNPC;
+
+/**
+ * Callback type for Skills NPC click events
+ */
+export type SkillsNPCClickCallback = (npc: SkillsNPC) => void;
+
+/**
+ * Callback type for Server Room NPC click events
+ */
+export type ServerRoomNPCClickCallback = (npc: ServerRoomNPC) => void;
 
 /**
  * NPC Manager handles all AI-driven NPCs and trigger zones in a scene
@@ -21,10 +40,38 @@ const AI_ZONE_LAYER_NAME = "ai-zones";
 export class NPCManager {
     private scene: GameScene;
     private npcs: Map<string, AIDrivenNPC> = new Map();
+    private skillsNpcs: Map<string, SkillsNPC> = new Map();
+    private serverRoomNpcs: Map<string, ServerRoomNPC> = new Map();
     private triggerAreas: Map<string, AITriggerArea> = new Map();
+    private onSkillsNPCClick: SkillsNPCClickCallback | null = null;
+    private onServerRoomNPCClick: ServerRoomNPCClickCallback | null = null;
 
     constructor(scene: GameScene) {
         this.scene = scene;
+    }
+
+    /**
+     * Set callback for Skills NPC click events
+     */
+    public setOnSkillsNPCClick(callback: SkillsNPCClickCallback): void {
+        this.onSkillsNPCClick = callback;
+
+        // Update existing Skills NPCs with the callback
+        for (const npc of this.skillsNpcs.values()) {
+            npc.setOnClick(callback);
+        }
+    }
+
+    /**
+     * Set callback for Server Room NPC click events
+     */
+    public setOnServerRoomNPCClick(callback: ServerRoomNPCClickCallback): void {
+        this.onServerRoomNPCClick = callback;
+
+        // Update existing Server Room NPCs with the callback
+        for (const npc of this.serverRoomNpcs.values()) {
+            npc.setOnClick(callback);
+        }
     }
 
     /**
@@ -38,6 +85,12 @@ export class NPCManager {
 
         // Load AI NPCs from map
         this.loadNPCsFromMap();
+
+        // Load Skills NPCs from map
+        this.loadSkillsNPCsFromMap();
+
+        // Load Server Room NPCs from map
+        this.loadServerRoomNPCsFromMap();
 
         // Load AI trigger zones from map
         this.loadZonesFromMap();
@@ -68,6 +121,60 @@ export class NPCManager {
         }
 
         console.log(`Loaded ${this.npcs.size} AI NPCs from map`);
+    }
+
+    /**
+     * Load Skills NPCs from map layer
+     */
+    private loadSkillsNPCsFromMap(): void {
+        const map = this.scene.Map;
+        if (!map) {
+            console.warn("No map available to load Skills NPCs");
+            return;
+        }
+
+        // Look for Skills NPC objects in the map
+        const skillsNpcsLayer = map.getObjectLayer(SKILLS_NPC_LAYER_NAME);
+        if (!skillsNpcsLayer) {
+            console.log("No Skills NPCs layer found in map");
+            return;
+        }
+
+        for (const object of skillsNpcsLayer.objects) {
+            const config = this.parseSkillsNPCConfig(object);
+            if (config) {
+                this.addSkillsNPC(config);
+            }
+        }
+
+        console.log(`Loaded ${this.skillsNpcs.size} Skills NPCs from map`);
+    }
+
+    /**
+     * Load Server Room NPCs from map layer
+     */
+    private loadServerRoomNPCsFromMap(): void {
+        const map = this.scene.Map;
+        if (!map) {
+            console.warn("No map available to load Server Room NPCs");
+            return;
+        }
+
+        // Look for Server Room NPC objects in the map
+        const serverRoomNpcsLayer = map.getObjectLayer(SERVER_ROOM_NPC_LAYER_NAME);
+        if (!serverRoomNpcsLayer) {
+            console.log("No Server Room NPCs layer found in map");
+            return;
+        }
+
+        for (const object of serverRoomNpcsLayer.objects) {
+            const config = this.parseServerRoomNPCConfig(object);
+            if (config) {
+                this.addServerRoomNPC(config);
+            }
+        }
+
+        console.log(`Loaded ${this.serverRoomNpcs.size} Server Room NPCs from map`);
     }
 
     /**
@@ -119,6 +226,52 @@ export class NPCManager {
             triggerMessage: properties.triggerMessage || properties["triggerMessage"] || properties.trigger_message,
             greetingMessage: properties.greeting || properties["greeting"] || properties.greetingMessage,
             texture: properties.texture || properties["texture"] || "npc-default",
+        };
+    }
+
+    /**
+     * Parse Skills NPC configuration from Tiled object
+     */
+    private parseSkillsNPCConfig(object: Phaser.Types.Tilemaps.TiledObject): SkillsNPCConfig | null {
+        if (!object.x || !object.y) {
+            return null;
+        }
+
+        const properties = this.parseProperties(object.properties);
+
+        return {
+            id: object.id.toString() || `skills-npc-${Date.now()}`,
+            name: object.name || "Skills Store",
+            x: object.x,
+            y: object.y,
+            texture: properties.texture || properties["texture"] || "npc-tech-assistant",
+            triggerDistance: parseInt(properties.triggerDistance || properties["triggerDistance"] || "64", 10),
+            triggerMessage: properties.triggerMessage || properties["triggerMessage"] || properties.trigger_message || "Click to open Skills Store",
+            greetingMessage: properties.greeting || properties["greeting"] || properties.greetingMessage || "Welcome to the Skills Store!",
+            personality: properties.personality || properties["personality"] || "a helpful skills management assistant",
+            associatedDevice: properties.associatedDevice || properties["associatedDevice"] || properties.associated_device,
+        };
+    }
+
+    /**
+     * Parse Server Room NPC configuration from Tiled object
+     */
+    private parseServerRoomNPCConfig(object: Phaser.Types.Tilemaps.TiledObject): ServerRoomNPCConfig | null {
+        if (!object.x || !object.y) {
+            return null;
+        }
+
+        const properties = this.parseProperties(object.properties);
+
+        return {
+            id: object.id.toString() || `server-room-npc-${Date.now()}`,
+            name: object.name || "Server Room",
+            x: object.x,
+            y: object.y,
+            texture: properties.texture || properties["texture"] || "npc-server-admin",
+            triggerDistance: parseInt(properties.triggerDistance || properties["triggerDistance"] || "64", 10),
+            triggerMessage: properties.triggerMessage || properties["triggerMessage"] || properties.trigger_message || "Click to open Server Configuration",
+            greetingMessage: properties.greeting || properties["greeting"] || properties.greetingMessage || "Configure your system settings here.",
         };
     }
 
@@ -187,6 +340,36 @@ export class NPCManager {
     }
 
     /**
+     * Add a Skills NPC to the scene
+     */
+    public addSkillsNPC(config: SkillsNPCConfig): SkillsNPC {
+        const npc = createSkillsNPC(this.scene, config);
+
+        // Set click callback if available
+        if (this.onSkillsNPCClick) {
+            npc.setOnClick(this.onSkillsNPCClick);
+        }
+
+        this.skillsNpcs.set(config.id, npc);
+        return npc;
+    }
+
+    /**
+     * Add a Server Room NPC to the scene
+     */
+    public addServerRoomNPC(config: ServerRoomNPCConfig): ServerRoomNPC {
+        const npc = createServerRoomNPC(this.scene, config);
+
+        // Set click callback if available
+        if (this.onServerRoomNPCClick) {
+            npc.setOnClick(this.onServerRoomNPCClick);
+        }
+
+        this.serverRoomNpcs.set(config.id, npc);
+        return npc;
+    }
+
+    /**
      * Remove an AI NPC from the scene
      */
     public removeNPC(id: string): void {
@@ -195,6 +378,31 @@ export class NPCManager {
             npc.destroy();
             this.npcs.delete(id);
         }
+
+        // Also check Skills NPCs
+        const skillsNpc = this.skillsNpcs.get(id);
+        if (skillsNpc) {
+            skillsNpc.destroy();
+            this.skillsNpcs.delete(id);
+        }
+
+        // Also check Server Room NPCs
+        const serverRoomNpc = this.serverRoomNpcs.get(id);
+        if (serverRoomNpc) {
+            serverRoomNpc.destroy();
+            this.serverRoomNpcs.delete(id);
+        }
+    }
+
+    /**
+     * Remove a Skills NPC from the scene
+     */
+    public removeSkillsNPC(id: string): void {
+        const npc = this.skillsNpcs.get(id);
+        if (npc) {
+            npc.destroy();
+            this.skillsNpcs.delete(id);
+        }
     }
 
     /**
@@ -202,6 +410,20 @@ export class NPCManager {
      */
     public getNPC(id: string): AIDrivenNPC | undefined {
         return this.npcs.get(id);
+    }
+
+    /**
+     * Get a Skills NPC by ID
+     */
+    public getSkillsNPC(id: string): SkillsNPC | undefined {
+        return this.skillsNpcs.get(id);
+    }
+
+    /**
+     * Get any NPC by ID (checks both AI NPCs and Skills NPCs)
+     */
+    public getAnyNPC(id: string): AnyNPC | undefined {
+        return this.npcs.get(id) || this.skillsNpcs.get(id) || this.serverRoomNpcs.get(id);
     }
 
     /**
@@ -243,8 +465,13 @@ export class NPCManager {
         const playerX = currentPlayer.x;
         const playerY = currentPlayer.y;
 
-        // Update all NPCs
+        // Update all AI NPCs
         for (const npc of this.npcs.values()) {
+            npc.update(playerX, playerY);
+        }
+
+        // Update all Skills NPCs
+        for (const npc of this.skillsNpcs.values()) {
             npc.update(playerX, playerY);
         }
 
@@ -260,10 +487,24 @@ export class NPCManager {
     }
 
     /**
-     * Get all NPCs
+     * Get all AI NPCs
      */
     public getAllNPCs(): AIDrivenNPC[] {
         return Array.from(this.npcs.values());
+    }
+
+    /**
+     * Get all Skills NPCs
+     */
+    public getAllSkillsNPCs(): SkillsNPC[] {
+        return Array.from(this.skillsNpcs.values());
+    }
+
+    /**
+     * Get all NPCs (both AI and Skills NPCs)
+     */
+    public getAllAnyNPCs(): AnyNPC[] {
+        return [...this.npcs.values(), ...this.skillsNpcs.values()];
     }
 
     /**
@@ -295,11 +536,17 @@ export class NPCManager {
      * Clean up all NPCs and trigger areas
      */
     public destroy(): void {
-        // Destroy all NPCs
+        // Destroy all AI NPCs
         for (const npc of this.npcs.values()) {
             npc.destroy();
         }
         this.npcs.clear();
+
+        // Destroy all Skills NPCs
+        for (const npc of this.skillsNpcs.values()) {
+            npc.destroy();
+        }
+        this.skillsNpcs.clear();
 
         // Destroy all trigger areas
         for (const area of this.triggerAreas.values()) {

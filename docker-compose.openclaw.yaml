@@ -13,6 +13,11 @@
 #   智谱 AI (GLM) 配置:
 #   ANTHROPIC_AUTH_TOKEN=your-token
 #   ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic
+#
+#   代理配置 (可选):
+#   HTTP_PROXY=http://192.168.9.113:10808
+#   HTTPS_PROXY=http://192.168.9.113:10808
+#   NO_PROXY=localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,10.0.0.3
 
 version: "3"
 services:
@@ -36,6 +41,15 @@ services:
       - ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL}
       # 默认模型 (智谱 GLM-5)
       - OPENCLAW_DEFAULT_MODEL=${OPENCLAW_DEFAULT_MODEL:-glm-5}
+      # 代理配置
+      - HTTP_PROXY=${HTTP_PROXY:-}
+      - HTTPS_PROXY=${HTTPS_PROXY:-}
+      - http_proxy=${HTTP_PROXY:-}
+      - https_proxy=${HTTPS_PROXY:-}
+      - ALL_PROXY=${ALL_PROXY:-}
+      - all_proxy=${ALL_PROXY:-}
+      - NO_PROXY=${NO_PROXY:-localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,10.0.0.3}
+      - no_proxy=${NO_PROXY:-localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,10.0.0.3}
     networks:
       - workadventure-network
     healthcheck:
