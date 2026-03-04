@@ -3,6 +3,7 @@
     import { chatVisibilityStore } from "../../Stores/ChatStore";
     import { LL } from "../../../i18n/i18n-svelte";
     import { IconX, IconSearch } from "@wa-icons";
+    import { skillsPanelStore } from "../Stores/SkillsStore";
     export let hasSearch;
     export let hasCloseChat;
     export let searchActive = false;
@@ -26,6 +27,11 @@
 
     function handleToggleSearch() {
         dispatch("toggleSearch");
+        menuOpen = false;
+    }
+
+    function openSkillsPanel() {
+        skillsPanelStore.set(true);
         menuOpen = false;
     }
 </script>
@@ -81,6 +87,18 @@
                     <span class="text-sm">
                         {searchActive ? $LL.chat.closeSearch() : $LL.chat.search()}
                     </span>
+                </button>
+
+                <button
+                    class="menu-item w-full flex items-center gap-3 p-3 hover:bg-white/10 rounded-lg text-white text-left transition-colors"
+                    on:click={openSkillsPanel}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <span class="text-sm">Skills</span>
                 </button>
 
                 <button
