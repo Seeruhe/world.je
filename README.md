@@ -91,4 +91,26 @@ Note: on some OSes, you will need to add this line to your `/etc/hosts` file:
 
 ### Troubleshooting
 
-See our [troubleshooting guide](docs/others/troubleshooting.md). 
+See our [troubleshooting guide](docs/others/troubleshooting.md).
+
+#### Proto 文件生成问题
+
+如果在启动时遇到 `protoc` 命令崩溃（SIGSEGV）的问题，这是因为 `grpc-tools` 包中的 protoc 二进制文件可能与当前系统架构不兼容。
+
+**解决方案**: 手动安装系统级 `protobuf-compiler` 并生成 proto 文件：
+
+```bash
+# 在 messages 容器中安装 protobuf-compiler
+docker exec -u root worldje-messages-1 apt-get update && apt-get install -y protobuf-compiler
+
+# 生成 proto 文件
+docker exec worldje-messages-1 bash -c "cd /usr/src/app && protoc --experimental_allow_proto3_optional --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=../libs/messages/src/ts-proto-generated --ts_proto_opt=outputServices=grpc-js --ts_proto_opt=oneof=unions --ts_proto_opt=esModuleInterop=true -I ./protos protos/*.proto"
+
+# 添加 ts-nocheck 注释
+docker exec worldje-messages-1 bash -c "cd /usr/src/app && sed -i '1i\//@ts-nocheck' ../libs/messages/src/ts-proto-generated/*.ts"
+```
+
+生成完成后，重启相关服务：
+```bash
+docker-compose restart play back map-storage
+``` 
