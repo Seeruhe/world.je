@@ -1,13 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(docker compose:*)",
-      "Bash(docker rm:*)",
-      "Bash(docker-compose logs:*)",
-      "Bash(docker-compose:*)",
-      "Bash(grep:*)",
-      "Bash(ls:*)",
-      "Bash(curl:*)"
+      "Bash(git push origin main)",
+      "Bash(docker-compose down && docker-compose up -d 2>&1 | tail -20)",
+      "Bash(git commit -m \"$\\(cat <<'EOF'\nfeat: Rebrand to world.je and add Skills UI integration\n\n- Replace workadventure.localhost with world.je.localhost domain\n- Add world.je SVG logo for loading screen\n- Update LoaderScene and GameOverlay to use new branding\n- Add Skills button to ChatActionMenu\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

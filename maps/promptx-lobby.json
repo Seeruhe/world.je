@@ -1,0 +1,139 @@
+{
+  "name": "PromptX AI Hub",
+  "description": "PromptX AI 交互演示房间 - 体验 AI 技能和智能 NPC",
+  "version": "1.0.0",
+  "mapUrl": "/maps/promptx-lobby.tmj",
+  "scriptUrl": "/maps/scripts/promptx-lobby.js",
+  "properties": {
+    "maxUsers": 50,
+    "autoInstance": true,
+    "instanceThreshold": 30
+  },
+  "zones": [
+    {
+      "id": "welcome-zone",
+      "name": "欢迎区",
+      "type": "public",
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 300,
+      "onEnter": {
+        "message": "欢迎来到 PromptX AI Hub！探索 AI 技能，与智能 NPC 互动。",
+        "trigger": "notify"
+      }
+    },
+    {
+      "id": "skills-demo-zone",
+      "name": "技能演示区",
+      "type": "public",
+      "x": 400,
+      "y": 0,
+      "width": 400,
+      "height": 300,
+      "abilities": [
+        "skill-ai-translate",
+        "skill-ai-summarize",
+        "skill-code-exec"
+      ]
+    },
+    {
+      "id": "ai-lab-zone",
+      "name": "AI 实验室",
+      "type": "restricted",
+      "x": 0,
+      "y": 300,
+      "width": 400,
+      "height": 300,
+      "requiresRole": ["developer", "admin"],
+      "abilities": [
+        "skill-remote-shell",
+        "skill-k8s-deploy",
+        "skill-sql-query"
+      ],
+      "policy": {
+        "allowScreenshot": false,
+        "allowExport": false
+      }
+    },
+    {
+      "id": "npc-interaction-zone",
+      "name": "NPC 互动区",
+      "type": "public",
+      "x": 400,
+      "y": 300,
+      "width": 400,
+      "height": 300
+    }
+  ],
+  "npcs": [
+    {
+      "id": "npc-guide",
+      "name": "小普",
+      "role": "向导",
+      "personality": "friendly",
+      "position": { "x": 200, "y": 150 },
+      "triggerDistance": 64,
+      "greeting": "你好！我是小普，你的 AI 助手向导。点击我可以了解更多功能！",
+      "systemPrompt": "你是 PromptX AI Hub 的向导小普。你的职责是帮助访客了解这个空间的功能，包括 AI 技能、NPC 互动、虚拟世界探索等。保持友好、热情的态度。",
+      "abilities": ["skill-npc-chat"]
+    },
+    {
+      "id": "npc-developer",
+      "name": "码大师",
+      "role": "技术顾问",
+      "personality": "expert",
+      "position": { "x": 200, "y": 450 },
+      "triggerDistance": 64,
+      "greeting": "需要技术帮助吗？我可以协助你进行代码开发、调试和部署。",
+      "systemPrompt": "你是 PromptX AI Hub 的技术顾问码大师。你精通各种编程语言、框架和 DevOps 工具。帮助用户解决技术问题，提供代码建议和最佳实践。",
+      "abilities": ["skill-npc-chat", "skill-code-exec", "skill-github"]
+    }
+  ],
+  "items": [
+    {
+      "id": "terminal-main",
+      "name": "AI 终端",
+      "type": "terminal",
+      "position": { "x": 500, "y": 100 },
+      "abilities": ["skill-code-exec", "skill-ai-translate"],
+      "interaction": {
+        "type": "click",
+        "action": "openPanel",
+        "panelType": "skills"
+      }
+    },
+    {
+      "id": "whiteboard-collab",
+      "name": "协作白板",
+      "type": "whiteboard",
+      "position": { "x": 600, "y": 100 },
+      "interaction": {
+        "type": "click",
+        "action": "openPanel",
+        "panelType": "whiteboard"
+      }
+    },
+    {
+      "id": "portal-skills",
+      "name": "技能传送门",
+      "type": "portal",
+      "position": { "x": 700, "y": 200 },
+      "targetZone": "skills-demo-zone",
+      "interaction": {
+        "type": "enter",
+        "action": "teleport",
+        "effect": "fade"
+      }
+    }
+  ],
+  "exits": [
+    {
+      "id": "exit-main",
+      "name": "返回大厅",
+      "position": { "x": 400, "y": 600 },
+      "targetRoom": "main-lobby",
+      "targetPosition": { "x": 400, "y": 100 }
+    }
+  ]
+}

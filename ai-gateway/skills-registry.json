@@ -324,6 +324,248 @@
         }
       ],
       "installed": false
+    },
+    {
+      "id": "skill-ai-translate",
+      "name": "AI 翻译",
+      "description": "使用 AI 进行多语言翻译",
+      "version": "1.0.0",
+      "author": "PromptX Team",
+      "category": "communication",
+      "icon": "globe",
+      "type": "api",
+      "apiConfig": {
+        "baseUrl": "internal://ai-gateway",
+        "authType": "none"
+      },
+      "executionMode": "server",
+      "permissions": [],
+      "configFields": [
+        {
+          "key": "sourceLang",
+          "label": "源语言",
+          "type": "select",
+          "required": false,
+          "default": "auto",
+          "options": [
+            { "value": "auto", "label": "自动检测" },
+            { "value": "zh", "label": "中文" },
+            { "value": "en", "label": "English" },
+            { "value": "ja", "label": "日本語" },
+            { "value": "ko", "label": "한국어" }
+          ]
+        },
+        {
+          "key": "targetLang",
+          "label": "目标语言",
+          "type": "select",
+          "required": true,
+          "default": "zh",
+          "options": [
+            { "value": "zh", "label": "中文" },
+            { "value": "en", "label": "English" },
+            { "value": "ja", "label": "日本語" },
+            { "value": "ko", "label": "한국어" }
+          ]
+        }
+      ],
+      "installed": true
+    },
+    {
+      "id": "skill-ai-summarize",
+      "name": "AI 总结",
+      "description": "使用 AI 总结长文本内容",
+      "version": "1.0.0",
+      "author": "PromptX Team",
+      "category": "data",
+      "icon": "clipboard",
+      "type": "api",
+      "apiConfig": {
+        "baseUrl": "internal://ai-gateway",
+        "authType": "none"
+      },
+      "executionMode": "server",
+      "permissions": [],
+      "configFields": [
+        {
+          "key": "maxLength",
+          "label": "最大输出长度",
+          "type": "number",
+          "required": false,
+          "default": 500
+        },
+        {
+          "key": "style",
+          "label": "总结风格",
+          "type": "select",
+          "required": false,
+          "default": "brief",
+          "options": [
+            { "value": "brief", "label": "简洁" },
+            { "value": "detailed", "label": "详细" },
+            { "value": "bullet", "label": "要点列表" }
+          ]
+        }
+      ],
+      "installed": true
+    },
+    {
+      "id": "skill-k8s-deploy",
+      "name": "K8s 部署",
+      "description": "部署应用到 Kubernetes 集群",
+      "version": "1.0.0",
+      "author": "DevOps Team",
+      "category": "automation",
+      "icon": "container",
+      "type": "mcp",
+      "mcpConfig": {
+        "command": "mcp-server-kubernetes",
+        "args": [],
+        "env": {}
+      },
+      "executionMode": "server",
+      "permissions": [
+        {
+          "type": "network",
+          "description": "访问 Kubernetes API",
+          "required": true
+        },
+        {
+          "type": "shell",
+          "description": "执行 kubectl 命令",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "cluster",
+          "label": "目标集群",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "prod", "label": "生产环境" },
+            { "value": "staging", "label": "预发布" },
+            { "value": "dev", "label": "开发环境" }
+          ]
+        },
+        {
+          "key": "namespace",
+          "label": "命名空间",
+          "type": "string",
+          "required": true,
+          "default": "default"
+        },
+        {
+          "key": "dryRun",
+          "label": "试运行",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ],
+      "installed": false
+    },
+    {
+      "id": "skill-room-generate",
+      "name": "房间生成",
+      "description": "AI 生成虚拟房间地图",
+      "version": "1.0.0",
+      "author": "PromptX Team",
+      "category": "development",
+      "icon": "map",
+      "type": "api",
+      "apiConfig": {
+        "baseUrl": "internal://map-generator",
+        "authType": "none"
+      },
+      "executionMode": "server",
+      "permissions": [
+        {
+          "type": "file-system",
+          "description": "写入生成的地图文件",
+          "required": true
+        }
+      ],
+      "configFields": [
+        {
+          "key": "template",
+          "label": "房间模板",
+          "type": "select",
+          "required": true,
+          "default": "office",
+          "options": [
+            { "value": "office", "label": "办公室" },
+            { "value": "meeting", "label": "会议室" },
+            { "value": "lab", "label": "实验室" },
+            { "value": "event", "label": "活动区" },
+            { "value": "project", "label": "项目空间" }
+          ]
+        },
+        {
+          "key": "size",
+          "label": "房间大小",
+          "type": "select",
+          "required": false,
+          "default": "medium",
+          "options": [
+            { "value": "small", "label": "小型 (20人)" },
+            { "value": "medium", "label": "中型 (50人)" },
+            { "value": "large", "label": "大型 (100人)" }
+          ]
+        },
+        {
+          "key": "theme",
+          "label": "主题风格",
+          "type": "string",
+          "required": false,
+          "default": "modern"
+        }
+      ],
+      "installed": true
+    },
+    {
+      "id": "skill-npc-chat",
+      "name": "NPC 对话",
+      "description": "与 AI NPC 进行智能对话",
+      "version": "1.0.0",
+      "author": "PromptX Team",
+      "category": "communication",
+      "icon": "user",
+      "type": "api",
+      "apiConfig": {
+        "baseUrl": "internal://ai-gateway",
+        "authType": "none"
+      },
+      "executionMode": "server",
+      "permissions": [],
+      "configFields": [
+        {
+          "key": "personality",
+          "label": "NPC 人格",
+          "type": "select",
+          "required": true,
+          "default": "friendly",
+          "options": [
+            { "value": "friendly", "label": "友好助手" },
+            { "value": "expert", "label": "专业顾问" },
+            { "value": "guide", "label": "导游" },
+            { "value": "guard", "label": "守卫" }
+          ]
+        },
+        {
+          "key": "language",
+          "label": "对话语言",
+          "type": "select",
+          "required": false,
+          "default": "zh",
+          "options": [
+            { "value": "zh", "label": "中文" },
+            { "value": "en", "label": "English" },
+            { "value": "ja", "label": "日本語" }
+          ]
+        }
+      ],
+      "installed": true
     }
   ]
 }
