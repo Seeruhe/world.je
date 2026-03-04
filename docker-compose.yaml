@@ -49,8 +49,8 @@ services:
       HTTPS_PROXY: ${HTTPS_PROXY:-}
       http_proxy: ${HTTP_PROXY:-}
       https_proxy: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-}
-      no_proxy: ${NO_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
+      no_proxy: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
       # On startup, we ask the messages container to regenerate the files.
       # Note: we need to use this "messages" container because of ARM64 processors that are not supported with protoc (used in "messages" container)
       STARTUP_COMMAND_1: ../wait-proto.sh
@@ -227,8 +227,8 @@ services:
       HTTPS_PROXY: ${HTTPS_PROXY:-}
       http_proxy: ${HTTP_PROXY:-}
       https_proxy: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-}
-      no_proxy: ${NO_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
+      no_proxy: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
       #DEBUG: "*"
       PLAY_URL: http://play.workadventure.localhost
       MINIMUM_DISTANCE: "${MINIMUM_DISTANCE}"
@@ -287,8 +287,8 @@ services:
       HTTPS_PROXY: ${HTTPS_PROXY:-}
       http_proxy: ${HTTP_PROXY:-}
       https_proxy: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-}
-      no_proxy: ${NO_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
+      no_proxy: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
       #DEBUG: "*"
       STARTUP_COMMAND_1: ../wait-proto.sh
       STARTUP_COMMAND_2: ../npm-install.sh
@@ -335,8 +335,8 @@ services:
       HTTPS_PROXY: ${HTTPS_PROXY:-}
       http_proxy: ${HTTP_PROXY:-}
       https_proxy: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-}
-      no_proxy: ${NO_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
+      no_proxy: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
       DEBUG: "*"
       STARTUP_COMMAND_1: ../npm-install.sh
       UPLOADER_URL: http://uploader.workadventure.localhost
@@ -371,8 +371,8 @@ services:
       HTTPS_PROXY: ${HTTPS_PROXY:-}
       http_proxy: ${HTTP_PROXY:-}
       https_proxy: ${HTTPS_PROXY:-}
-      NO_PROXY: ${NO_PROXY:-}
-      no_proxy: ${NO_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
+      no_proxy: localhost,127.0.0.1,.cluster.local,.svc,10.96.0.0/12,.workadventure.localhost,back,play,map-storage,uploader,messages,redis,synapse,oidc-server-mock,maps,icon
       STARTUP_COMMAND_1: npm install
       STARTUP_COMMAND_2: npm run proto:watch
     volumes:
