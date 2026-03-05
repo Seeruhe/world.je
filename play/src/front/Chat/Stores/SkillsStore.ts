@@ -395,6 +395,11 @@ function createSkillsStore() {
 export const skillsStore = createSkillsStore();
 
 /**
+ * Store for skills panel visibility
+ */
+export const skillsPanelStore = writable<boolean>(false);
+
+/**
  * Derived store for installed skills
  */
 export const installedSkills: Readable<Skill[]> = derived(skillsStore, ($store) =>
